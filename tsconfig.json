@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "outDir": "./dist/",
+      "sourceMap": true,
+      "lib": ["es2021", "dom"],
+      "noImplicitAny": true,
+      "esModuleInterop": true,
+      "module": "es6",
+      "target": "es2015",
+      "allowJs": true,
+      "checkJs": true,
+      "moduleResolution": "node",
+      "strictNullChecks": true,
+      "paths": {
+        "consts/*": ["./src/consts/*"],
+        "utils/*": ["./src/utils/*"],
+        "types/*": ["./src/types/*"],
+        "managers/*": ["./src/managers/*"],
+      }
+    },
+    "include": ["**/*.js", "**/*.ts", "tsconfig.json"],
+    "exclude": ["dist", "node_modules"],
+  }
+  
