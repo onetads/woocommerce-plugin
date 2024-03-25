@@ -1,0 +1,3 @@
+const PRODUCTS_CONTAINER_SELECTOR = '.products';
+
+export { PRODUCTS_CONTAINER_SELECTOR };
