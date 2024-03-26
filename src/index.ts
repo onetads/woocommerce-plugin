@@ -1,4 +1,4 @@
-import { initProductManager } from 'managers/ProductManager.utils';
+import { initProductManager } from 'managers/ProductManager/ProductManager.utils';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
 
 window.sponsoredProductConfig = {
