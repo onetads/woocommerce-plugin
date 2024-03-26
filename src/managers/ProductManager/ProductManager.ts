@@ -1,7 +1,6 @@
 import { PRODUCTS_CONTAINER_NOT_FOUND } from 'consts/messages';
 import { PRODUCTS_CONTAINER_SELECTOR } from 'consts/products';
 import { TAG_STYLES, TAG_STYLES_CLASS } from 'consts/tags';
-import { VIEWS_MAP } from 'consts/views';
 import { TPages } from 'types/pages';
 import getMessage from 'utils/getMessage';
 
@@ -22,25 +21,6 @@ class ProductManager {
 
   private page: TPages;
   private productsContainer: Element;
-
-  public getProductHTML = async (id: string) => {
-    const view = VIEWS_MAP[this.page];
-
-    const response = await fetch(
-      `${window.location.origin}/?rest_route=/ras/get-product-html&product_id=${id}&view=${view}`,
-    );
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const productHTMLString = await response.text();
-
-    const productHTMLWrapper = document.createElement('div');
-    productHTMLWrapper.innerHTML = productHTMLString;
-
-    return productHTMLWrapper.firstElementChild;
-  };
 
   private addTagToProduct = (productElement: Element) => {
     const labelElement = document.createElement('p');
