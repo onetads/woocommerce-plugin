@@ -6,6 +6,8 @@ const MAIN_PAGE_SELECTOR = '.home';
 const PRODUCT_PAGE_SELECTOR = '.single-product';
 const CATEGORY_PAGE_SELECTOR = '.tax-product_cat';
 
+const BLOCK_THEME_CLASS = 'woocommerce-uses-block-theme';
+
 export {
   MAIN_PAGE,
   PRODUCT_PAGE,
@@ -13,4 +15,5 @@ export {
   MAIN_PAGE_SELECTOR,
   PRODUCT_PAGE_SELECTOR,
   CATEGORY_PAGE_SELECTOR,
+  BLOCK_THEME_CLASS,
 };

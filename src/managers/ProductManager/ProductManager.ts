@@ -42,7 +42,7 @@ class ProductManager {
 
     productElement.prepend(labelElement);
 
-    return productElement;
+    return productElement as HTMLElement;
   };
 
   private deleteExistingProduct = (id: string) => {
@@ -97,6 +97,7 @@ class ProductManager {
 
       const markedProduct = this.addTagToProduct(product.productElement);
       markedProduct.classList.remove('first');
+      markedProduct.style.visibility = 'hidden';
       this.productsContainer.prepend(markedProduct);
     }
 

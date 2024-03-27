@@ -58,7 +58,7 @@ class AdManager {
           }));
 
           resolve(products);
-        } catch {
+        } catch (_) {
           reject(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
         }
       });

@@ -1,4 +1,5 @@
-const PRODUCTS_CONTAINER_SELECTOR = '.products';
+const PRODUCTS_CONTAINER_SELECTOR = 'ul[class*="products-block-post-template"]';
+//    'ul[class^="products"]';
 const PRODUCTS_SELECTOR = 'li[class^="post-"], li[class*=" post-"]';
 const PRODUCT_TITLE = 'woocommerce-loop-product__title';
 
