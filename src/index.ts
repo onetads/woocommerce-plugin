@@ -1,5 +1,7 @@
+import { initAdManager } from 'managers/AdManager/AdManager.util';
 import { initProductManager } from 'managers/ProductManager/ProductManager.utils';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
+import waitForDlApi from 'utils/waitForDlApi';
 
 window.sponsoredProductConfig = {
   isLoaderVisible: true,
@@ -25,8 +27,13 @@ const runApp = async () => {
 
     if (!page) return;
 
+    await waitForDlApi();
+
+    const AdManager = initAdManager(page);
+    const products = await AdManager.getPromotedProducts();
+
     const ProductManager = initProductManager(page);
-    ProductManager.injectProduct();
+    ProductManager.injectProducts(products);
   } catch (e) {
     if (e instanceof Error) {
       console.error(e.message);

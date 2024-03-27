@@ -5,4 +5,10 @@ type TAdProduct = {
   dsaUrl: string;
 };
 
-export type { TAdProduct };
+type TFormattedProduct = {
+  id: string;
+  dsaUrl: string;
+  productElement: Element;
+};
+
+export type { TAdProduct, TFormattedProduct };
