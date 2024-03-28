@@ -6,6 +6,8 @@ const LINK_SELECTOR_DOES_NOT_MATCH = 'LINK_SELECTOR_DOES_NOT_MATCH';
 const FETCHING_DLAPI_TOOK_TOO_LONG = 'FETCHING_DLAPI_TOOK_TOO_LONG';
 const COULDNT_FIND_NUMBER_OF_ITEMS_IN_ROW =
   'COULDNT_FIND_NUMBER_OF_ITEMS_IN_ROW';
+const COULDNT_GET_SPINNER_COLOR = 'COULDNT_GET_SPINNER_COLOR';
+const NOT_SUPPORTED_THEME = 'NOT_SUPPORTED_THEME';
 
 const messagesMap = {
   [PRODUCTS_CONTAINER_NOT_FOUND]: 'Products container not found',
@@ -16,6 +18,8 @@ const messagesMap = {
   [LINK_SELECTOR_DOES_NOT_MATCH]: 'Link selector does not match',
   [FETCHING_DLAPI_TOOK_TOO_LONG]: 'Fetching dlApi took too long',
   [COULDNT_FIND_NUMBER_OF_ITEMS_IN_ROW]: 'Couldnt find number of items in row',
+  [COULDNT_GET_SPINNER_COLOR]: 'Couldnt get spinner color',
+  [NOT_SUPPORTED_THEME]: 'Block themes are not supported',
 };
 
 export {
@@ -27,4 +31,6 @@ export {
   LINK_SELECTOR_DOES_NOT_MATCH,
   FETCHING_DLAPI_TOOK_TOO_LONG,
   COULDNT_FIND_NUMBER_OF_ITEMS_IN_ROW,
+  COULDNT_GET_SPINNER_COLOR,
+  NOT_SUPPORTED_THEME,
 };
