@@ -4,7 +4,7 @@ const CATEGORY_PAGE = 'CATEGORY_PAGE';
 
 const MAIN_PAGE_SELECTOR = '.home';
 const PRODUCT_PAGE_SELECTOR = '.single-product';
-const CATEGORY_PAGE_SELECTOR = '.tax-product_cat';
+const CATEGORY_PAGE_SELECTOR = '.archive';
 
 const BLOCK_THEME_CLASS = 'woocommerce-uses-block-theme';
 
