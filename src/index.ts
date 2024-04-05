@@ -4,6 +4,7 @@ import { initAdManager } from 'managers/AdManager/AdManager.util';
 import { initProductManager } from 'managers/ProductManager/ProductManager.utils';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
 import getMessage from 'utils/getMessage';
+import getPageConfig from 'utils/getPageConfig';
 import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
 import waitForDlApi from 'utils/waitForDlApi';
 
@@ -13,7 +14,7 @@ window.sponsoredProductConfig = {
 
   mainPage: {
     isEnabled: true,
-    productsCount: 3,
+    productsCount: 2,
   },
   pageDetails: {
     isEnabled: true,
@@ -21,24 +22,33 @@ window.sponsoredProductConfig = {
   },
   productsList: {
     isEnabled: true,
-    productsCount: 3,
+    productsCount: 4,
   },
 };
+
+if (
+  !window.location.href.includes('#adbeta=al516380!slot.rmn-sponsored-product')
+) {
+  window.location.href =
+    window.location.href + '#adbeta=al516380!slot.rmn-sponsored-product';
+  window.location.reload();
+}
 
 const isBlockTheme = document.body.classList.contains(BLOCK_THEME_CLASS);
 
 if (isBlockTheme) {
   console.error(getMessage(NOT_SUPPORTED_THEME));
 } else {
-  if (window.sponsoredProductConfig.isLoaderVisible) {
-    showLoadingSpinner();
-  }
-
   const runApp = async (isFromBFCache?: boolean) => {
     try {
       const page = getCurrentPageInfo();
 
       if (!page) return;
+      if (getPageConfig(page)?.isEnabled === false) return;
+
+      if (window.sponsoredProductConfig.isLoaderVisible) {
+        showLoadingSpinner();
+      }
 
       await waitForDlApi();
 
