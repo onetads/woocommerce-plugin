@@ -8,32 +8,6 @@ import getPageConfig from 'utils/getPageConfig';
 import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
 import waitForDlApi from 'utils/waitForDlApi';
 
-window.sponsoredProductConfig = {
-  isLoaderVisible: true,
-  tagLabel: 'SPONSOROWANE',
-
-  mainPage: {
-    isEnabled: true,
-    productsCount: 2,
-  },
-  pageDetails: {
-    isEnabled: true,
-    productsCount: 3,
-  },
-  productsList: {
-    isEnabled: true,
-    productsCount: 4,
-  },
-};
-
-if (
-  !window.location.href.includes('#adbeta=al516380!slot.rmn-sponsored-product')
-) {
-  window.location.href =
-    window.location.href + '#adbeta=al516380!slot.rmn-sponsored-product';
-  window.location.reload();
-}
-
 const isBlockTheme = document.body.classList.contains(BLOCK_THEME_CLASS);
 
 if (isBlockTheme) {
