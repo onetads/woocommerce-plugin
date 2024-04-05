@@ -9,10 +9,10 @@ import {
   PRODUCT_TITLE,
 } from 'consts/products';
 import { TAG_STYLES, TAG_STYLES_CLASS } from 'consts/tags';
-import { getProductsCountToInject } from 'managers/ProductManager/ProductManager.utils';
 import { TPages } from 'types/pages';
 import { TFormattedProduct } from 'types/product';
 import getMessage from 'utils/getMessage';
+import getProductsCountToInject from 'utils/getProductCountToInject';
 
 class ProductManager {
   private page: TPages;
@@ -97,10 +97,10 @@ class ProductManager {
     this.injectTagStyles();
     this.resetRowStyles();
 
-    const productsCountToPaste = getProductsCountToInject(this.page);
+    const productsCountToInject = getProductsCountToInject(this.page);
 
     for (const [index, product] of products.entries()) {
-      if (index >= productsCountToPaste) break;
+      if (index >= productsCountToInject) break;
 
       this.deleteExistingProduct(product.id);
 

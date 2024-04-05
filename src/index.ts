@@ -4,41 +4,25 @@ import { initAdManager } from 'managers/AdManager/AdManager.util';
 import { initProductManager } from 'managers/ProductManager/ProductManager.utils';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
 import getMessage from 'utils/getMessage';
+import getPageConfig from 'utils/getPageConfig';
 import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
 import waitForDlApi from 'utils/waitForDlApi';
-
-window.sponsoredProductConfig = {
-  isLoaderVisible: true,
-  tagLabel: 'SPONSOROWANE',
-
-  mainPage: {
-    isEnabled: true,
-    productsCount: 3,
-  },
-  pageDetails: {
-    isEnabled: true,
-    productsCount: 3,
-  },
-  productsList: {
-    isEnabled: true,
-    productsCount: 3,
-  },
-};
 
 const isBlockTheme = document.body.classList.contains(BLOCK_THEME_CLASS);
 
 if (isBlockTheme) {
   console.error(getMessage(NOT_SUPPORTED_THEME));
 } else {
-  if (window.sponsoredProductConfig.isLoaderVisible) {
-    showLoadingSpinner();
-  }
-
   const runApp = async (isFromBFCache?: boolean) => {
     try {
       const page = getCurrentPageInfo();
 
       if (!page) return;
+      if (getPageConfig(page)?.isEnabled === false) return;
+
+      if (window.sponsoredProductConfig.isLoaderVisible) {
+        showLoadingSpinner();
+      }
 
       await waitForDlApi();
 

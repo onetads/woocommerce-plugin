@@ -9,6 +9,7 @@ import { getProductsIds } from 'managers/AdManager/AdManager.util';
 import { TPages } from 'types/pages';
 import { TAdProduct, TFormattedProduct } from 'types/product';
 import getMessage from 'utils/getMessage';
+import getProductsCountToInject from 'utils/getProductCountToInject';
 
 class AdManager {
   private page: TPages;
@@ -95,7 +96,11 @@ class AdManager {
   private prepareProductsData = async (products: TAdProduct[]) => {
     const formattedProducts: TFormattedProduct[] = [];
 
-    for (const product of products) {
+    const productsCountToFetch = getProductsCountToInject(this.page);
+
+    for (const [index, product] of products.entries()) {
+      if (index >= productsCountToFetch) break;
+
       const productElement = await this.getProductHTML(product.offerId);
 
       if (!productElement) continue;
