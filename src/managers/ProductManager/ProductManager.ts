@@ -3,11 +3,13 @@ import {
   PRODUCTS_CONTAINER_NOT_FOUND,
 } from 'consts/messages';
 import {
+  ONET_SPONSORED_PRODUCT_CLASS,
   PRODUCTS_CONTAINER_SELECTOR,
   PRODUCTS_SELECTOR,
   PRODUCT_TITLE,
 } from 'consts/products';
 import { TAG_STYLES, TAG_STYLES_CLASS } from 'consts/tags';
+import { getProductsCountToInject } from 'managers/ProductManager/ProductManager.utils';
 import { TPages } from 'types/pages';
 import { TFormattedProduct } from 'types/product';
 import getMessage from 'utils/getMessage';
@@ -60,6 +62,7 @@ class ProductManager {
 
     for (const productElement of productElements) {
       productElement.classList.remove('first');
+      productElement.classList.remove('last');
     }
   };
 
@@ -78,11 +81,13 @@ class ProductManager {
     }
 
     for (const [index, productElement] of productElements.entries()) {
-      if (index % (Number(itemsInRow) + 1) === 0) {
+      if (index % Number(itemsInRow) === 0) {
         productElement.classList.add('first');
       }
 
-      if (index % Number(itemsInRow) === 0) {
+      if (index === 0) continue;
+
+      if ((index + 1) % Number(itemsInRow) === 0) {
         productElement.classList.add('last');
       }
     }
@@ -92,16 +97,28 @@ class ProductManager {
     this.injectTagStyles();
     this.resetRowStyles();
 
-    for (const product of products) {
+    const productsCountToPaste = getProductsCountToInject(this.page);
+
+    for (const [index, product] of products.entries()) {
+      if (index >= productsCountToPaste) break;
+
       this.deleteExistingProduct(product.id);
 
       const markedProduct = this.addTagToProduct(product.productElement);
       markedProduct.classList.remove('first');
-      markedProduct.style.visibility = 'hidden';
+      markedProduct.classList.add(ONET_SPONSORED_PRODUCT_CLASS);
       this.productsContainer.prepend(markedProduct);
     }
 
     this.regenerateRowStyles();
+  };
+
+  public deleteExistingSponsoredProducts = () => {
+    this.productsContainer
+      .querySelectorAll(`.${ONET_SPONSORED_PRODUCT_CLASS}`)
+      .forEach((product) => {
+        product.remove();
+      });
   };
 }
 

@@ -15,7 +15,7 @@ const TAG_STYLES = `
         font-size: 9px !important;
         font-weight: 400 !important;
         background-color: rgba(255,255,255,0.5) !important;
-        z-index: 999 !important;
+        z-index: 2 !important;
         pointer-events: none !important;
     }
 `;

@@ -13,15 +13,15 @@ window.sponsoredProductConfig = {
 
   mainPage: {
     isEnabled: true,
-    productsCount: 10,
+    productsCount: 3,
   },
   pageDetails: {
     isEnabled: true,
-    productsCount: 10,
+    productsCount: 3,
   },
   productsList: {
     isEnabled: true,
-    productsCount: 10,
+    productsCount: 3,
   },
 };
 
@@ -34,7 +34,7 @@ if (isBlockTheme) {
     showLoadingSpinner();
   }
 
-  const runApp = async () => {
+  const runApp = async (isFromBFCache?: boolean) => {
     try {
       const page = getCurrentPageInfo();
 
@@ -46,6 +46,11 @@ if (isBlockTheme) {
       const products = await AdManager.getPromotedProducts();
 
       const ProductManager = initProductManager(page);
+
+      if (isFromBFCache) {
+        ProductManager.deleteExistingSponsoredProducts();
+      }
+
       ProductManager.injectProducts(products);
       hideLoadingSpinner();
     } catch (e) {
@@ -63,4 +68,14 @@ if (isBlockTheme) {
       runApp();
     });
   }
+
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+      if (window.sponsoredProductConfig.isLoaderVisible) {
+        showLoadingSpinner();
+      }
+
+      runApp(true);
+    }
+  });
 }

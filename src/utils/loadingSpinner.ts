@@ -63,7 +63,7 @@ const showLoadingSpinner = () => {
   if (!productsContainer) return;
 
   productsContainer.style.position = 'relative';
-  productsContainer.style.overflow = 'auto';
+  productsContainer.style.overflow = 'hidden';
 
   let containerProductsBgColor = window
     .getComputedStyle(productsContainer, null)
@@ -102,6 +102,9 @@ const hideLoadingSpinner = () => {
   const productsContainer = document.querySelector(
     PRODUCTS_CONTAINER_SELECTOR,
   ) as HTMLElement;
+
+  productsContainer.style.position = 'static';
+  productsContainer.style.overflow = 'visible';
 
   const productElements = Array.from(
     productsContainer.querySelectorAll(PRODUCTS_SELECTOR),
