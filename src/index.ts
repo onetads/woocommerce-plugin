@@ -10,6 +10,24 @@ import waitForDlApi from 'utils/waitForDlApi';
 
 const isBlockTheme = document.body.classList.contains(BLOCK_THEME_CLASS);
 
+window.sponsoredProductConfig = window.sponsoredProductConfig || {
+  isLoaderVisible: true,
+  tagLabel: 'PROMOWANE',
+
+  mainPage: {
+    isEnabled: true,
+    productsCount: 1,
+  },
+  pageDetails: {
+    isEnabled: true,
+    productsCount: 1,
+  },
+  productsList: {
+    isEnabled: true,
+    productsCount: 1,
+  },
+};
+
 if (isBlockTheme) {
   console.error(getMessage(NOT_SUPPORTED_THEME));
 } else {
