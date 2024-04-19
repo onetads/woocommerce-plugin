@@ -40,6 +40,10 @@ class ProductManager {
     labelElement.classList.add(TAG_CLASS);
     labelElement.textContent = window.sponsoredProductConfig.tagLabel;
 
+    productElement.querySelectorAll(`.${TAG_CLASS}`).forEach((tag) => {
+      tag.remove();
+    });
+
     (
       productElement.querySelector(TAG_CONTAINER_SELECTOR) as HTMLElement
     ).prepend(labelElement);
