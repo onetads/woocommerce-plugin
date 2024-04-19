@@ -6,9 +6,8 @@ import {
   ONET_SPONSORED_PRODUCT_CLASS,
   PRODUCTS_CONTAINER_SELECTOR,
   PRODUCTS_SELECTOR,
-  PRODUCT_TITLE,
 } from 'consts/products';
-import { TAG_STYLES, TAG_STYLES_CLASS } from 'consts/tags';
+import { TAG_CLASS, TAG_CONTAINER_SELECTOR } from 'consts/tags';
 import { TPages } from 'types/pages';
 import { TFormattedProduct } from 'types/product';
 import getMessage from 'utils/getMessage';
@@ -37,24 +36,23 @@ class ProductManager {
   }
 
   private addTagToProduct = (productElement: Element) => {
-    const labelElement = document.createElement('p');
-    labelElement.classList.add(TAG_STYLES_CLASS);
-    labelElement.classList.add(PRODUCT_TITLE);
+    const labelElement = document.createElement('span');
+    labelElement.classList.add(TAG_CLASS);
     labelElement.textContent = window.sponsoredProductConfig.tagLabel;
 
-    productElement.prepend(labelElement);
+    productElement.querySelectorAll(`.${TAG_CLASS}`).forEach((tag) => {
+      tag.remove();
+    });
+
+    (
+      productElement.querySelector(TAG_CONTAINER_SELECTOR) as HTMLElement
+    ).prepend(labelElement);
 
     return productElement as HTMLElement;
   };
 
   private deleteExistingProduct = (id: string) => {
     this.productsContainer.querySelector(`.post-${id}`)?.remove();
-  };
-
-  private injectTagStyles = () => {
-    const stylesElement = document.createElement('style');
-    stylesElement.innerHTML = TAG_STYLES;
-    this.productsContainer.appendChild(stylesElement);
   };
 
   private resetRowStyles = () => {
@@ -94,7 +92,6 @@ class ProductManager {
   };
 
   public injectProducts = async (products: TFormattedProduct[]) => {
-    this.injectTagStyles();
     this.resetRowStyles();
 
     const productsCountToInject = getProductsCountToInject(this.page);
