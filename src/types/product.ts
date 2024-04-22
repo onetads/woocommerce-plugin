@@ -3,6 +3,7 @@ type TAdProduct = {
   imageUrl: string;
   offerUrl: string;
   dsaUrl: string;
+  div: string;
 };
 
 type TFormattedProduct = {
