@@ -3,11 +3,11 @@ import {
   PRODUCTS_CONTAINER_NOT_FOUND,
 } from 'consts/messages';
 import {
-  ONET_SPONSORED_PRODUCT_CLASS,
+  ONET_PRODUCT_CLASS,
   PRODUCTS_CONTAINER_SELECTOR,
   PRODUCTS_SELECTOR,
 } from 'consts/products';
-import { TAG_CLASS, TAG_CONTAINER_SELECTOR } from 'consts/tags';
+import { DSA_ICON, TAG_CLASS, TAG_CONTAINER_SELECTOR } from 'consts/tags';
 import { TPages } from 'types/pages';
 import { TFormattedProduct } from 'types/product';
 import getMessage from 'utils/getMessage';
@@ -35,10 +35,26 @@ class ProductManager {
     );
   }
 
-  private addTagToProduct = (productElement: Element) => {
+  private addTagToProduct = (
+    productElement: Element,
+    dsaUrl: string | undefined,
+  ) => {
     const labelElement = document.createElement('span');
     labelElement.classList.add(TAG_CLASS);
+    labelElement.style.display = 'inline-flex';
+    labelElement.style.alignItems = 'center';
+    labelElement.style.gap = '4px';
     labelElement.textContent = window.sponsoredProductConfig.tagLabel;
+
+    if (dsaUrl) {
+      const dsaIcon = document.createElement('a');
+      dsaIcon.innerHTML = DSA_ICON;
+      dsaIcon.target = '_blank';
+      dsaIcon.href = dsaUrl;
+      dsaIcon.style.color = 'inherit';
+      dsaIcon.style.lineHeight = '1em';
+      labelElement.appendChild(dsaIcon);
+    }
 
     productElement.querySelectorAll(`.${TAG_CLASS}`).forEach((tag) => {
       tag.remove();
@@ -93,6 +109,7 @@ class ProductManager {
 
   public injectProducts = async (products: TFormattedProduct[]) => {
     this.resetRowStyles();
+    this.deleteExistingSponsoredProducts();
 
     const productsCountToInject = getProductsCountToInject(this.page);
 
@@ -101,9 +118,12 @@ class ProductManager {
 
       this.deleteExistingProduct(product.id);
 
-      const markedProduct = this.addTagToProduct(product.productElement);
+      const markedProduct = this.addTagToProduct(
+        product.productElement,
+        product.dsaUrl,
+      );
       markedProduct.classList.remove('first');
-      markedProduct.classList.add(ONET_SPONSORED_PRODUCT_CLASS);
+      markedProduct.classList.add(ONET_PRODUCT_CLASS);
       this.productsContainer.prepend(markedProduct);
     }
 
@@ -112,7 +132,7 @@ class ProductManager {
 
   public deleteExistingSponsoredProducts = () => {
     this.productsContainer
-      .querySelectorAll(`.${ONET_SPONSORED_PRODUCT_CLASS}`)
+      .querySelectorAll(`.${ONET_PRODUCT_CLASS}`)
       .forEach((product) => {
         product.remove();
       });

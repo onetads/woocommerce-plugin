@@ -8,6 +8,8 @@ import getPageConfig from 'utils/getPageConfig';
 import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
 import waitForDlApi from 'utils/waitForDlApi';
 
+const isTestingEnvironment = process.env.IS_TEST_ENV === 'true';
+
 const isBlockTheme = document.body.classList.contains(BLOCK_THEME_CLASS);
 
 window.sponsoredProductConfig = window.sponsoredProductConfig || {
@@ -31,7 +33,7 @@ window.sponsoredProductConfig = window.sponsoredProductConfig || {
 if (isBlockTheme) {
   console.error(getMessage(NOT_SUPPORTED_THEME));
 } else {
-  const runApp = async (isFromBFCache?: boolean) => {
+  const runApp = async () => {
     try {
       const page = getCurrentPageInfo();
 
@@ -42,16 +44,15 @@ if (isBlockTheme) {
         showLoadingSpinner();
       }
 
-      await waitForDlApi();
+      if (!isTestingEnvironment) {
+        await waitForDlApi();
+      }
 
       const AdManager = initAdManager(page);
-      const products = await AdManager.getPromotedProducts();
+      const products =
+        await AdManager.getPromotedProducts(isTestingEnvironment);
 
       const ProductManager = initProductManager(page);
-
-      if (isFromBFCache) {
-        ProductManager.deleteExistingSponsoredProducts();
-      }
 
       ProductManager.injectProducts(products);
       hideLoadingSpinner();
@@ -66,18 +67,14 @@ if (isBlockTheme) {
   if (document.readyState !== 'loading') {
     runApp();
   } else {
-    window.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       runApp();
     });
   }
 
   window.addEventListener('pageshow', (event) => {
     if (event.persisted) {
-      if (window.sponsoredProductConfig.isLoaderVisible) {
-        showLoadingSpinner();
-      }
-
-      runApp(true);
+      runApp();
     }
   });
 }

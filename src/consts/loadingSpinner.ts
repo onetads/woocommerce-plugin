@@ -1,9 +1,9 @@
-const LOADING_SPINNER_CONTAINER_CLASS = 'onet-ads-loading-spinner-container';
-const LOADING_SPINNER_CLASS = 'onet-ads-loading-spinner';
+const LOADING_SPINNER_CONTAINER_CLASS = 'onet-loading-spinner-container';
+const LOADING_SPINNER_CLASS = 'onet-loading-spinner';
 
 const LOADING_SPINNER_CONTAINER_STYLES = `
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     z-index: 999;
     position: absolute;
@@ -18,6 +18,7 @@ const LOADING_SPINNER_STYLES = `
     height: 36px;
     border-style: solid;
     border-width: 3px;
+    margin-top: 2em;
     border-bottom-color: transparent;
     border-radius: 50%;
     display: inline-block;
