@@ -10,7 +10,7 @@ Yarn: v1.22.21
 # Scripts
 
 yarn build - builds minified js (code is bundled to dist/bundle.js file) <br/>
-yarn eslint - checks for eslint errors
+yarn eslint - checks for eslint errors <br/>
 yarn test - build minified js (code is bundled to dist/bundle.js file). This code is intended for testing in shops
 
 ## How to use test mode
