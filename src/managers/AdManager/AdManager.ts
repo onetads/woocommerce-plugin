@@ -88,9 +88,9 @@ class AdManager {
                 opts: {
                   offer_ids: this.productsIds.join(','),
                   pos: index,
-                  asyncRender: true,
-                  div: div,
                 },
+                asyncRender: true,
+                div: div,
                 tplCode: TPL_CODE,
               });
 
