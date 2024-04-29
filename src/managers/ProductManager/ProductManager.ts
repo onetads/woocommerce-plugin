@@ -125,6 +125,7 @@ class ProductManager {
       markedProduct.classList.remove('first');
       markedProduct.classList.add(ONET_PRODUCT_CLASS);
       this.productsContainer.prepend(markedProduct);
+      product.renderAd();
     }
 
     this.regenerateRowStyles();

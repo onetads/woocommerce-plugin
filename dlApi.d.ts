@@ -2,6 +2,12 @@ import { TFetchNativeAdOptions, TFetchNativeAdResponse } from 'types/dlApi';
 
 declare global {
   namespace dlApi {
+    const keyvalues:
+      | {
+          website_id: number;
+        }
+      | undefined;
+
     let cmd: {
       push: (fn: (dlApiObj: typeof dlApi) => void) => void;
     };

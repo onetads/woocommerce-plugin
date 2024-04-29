@@ -6,6 +6,7 @@ import {
   REQUEST_TIMED_OUT,
 } from 'consts/messages';
 import {
+  LINK_SELECTOR,
   PRODUCTS_CONTAINER_SELECTOR,
   PRODUCTS_SELECTOR,
   SPONSORED_PRODUCT_TAG,
@@ -58,8 +59,9 @@ class AdManager {
           id: productId,
           dsaUrl: window.location.origin,
           productElement: productElement,
+          renderAd: () => {},
         },
-      ];
+      ] as TFormattedProduct[];
     }
 
     if (!dlApi.fetchNativeAd)
@@ -68,73 +70,77 @@ class AdManager {
     const productsCount = getProductsCountToInject(this.page);
     const timeoutPromise = new Promise<void>((_, reject) => {
       setTimeout(() => {
-        reject(getMessage(REQUEST_TIMED_OUT));
+        reject(new Error(getMessage(REQUEST_TIMED_OUT)));
       }, MAX_TIMEOUT_MS);
     });
 
-    const fetchNativeAd = new Promise<TFormattedProduct[]>(
-      (resolve, reject) => {
-        dlApi.cmd = dlApi.cmd || [];
+    const fetchAds = new Promise<TFormattedProduct[]>((resolve, reject) => {
+      const formattedProducts: TFormattedProduct[] = [];
+      const fetchPromises: Promise<void>[] = [];
 
-        dlApi.cmd.push(async (dlApiObj) => {
-          const formattedProducts: TFormattedProduct[] = [];
+      dlApi.cmd = dlApi.cmd || [];
+      dlApi.cmd.push((dlApiObj) => {
+        for (let index = 1; index <= productsCount; index++) {
+          const div = SPONSORED_PRODUCT_TAG + index;
 
-          try {
-            for (let index = 1; index <= productsCount; index++) {
-              const div = SPONSORED_PRODUCT_TAG + index;
+          const fetchPromise = dlApiObj.fetchNativeAd!({
+            slot: SLOT_NAME,
+            opts: {
+              offer_ids: this.productsIds.join(','),
+              pos: index,
+            },
+            asyncRender: true,
+            div: div,
+            tplCode: TPL_CODE,
+          }).then((ads) => {
+            if (!ads) {
+              console.warn('Ad not found');
+              return;
+            }
 
-              const ads = await dlApiObj.fetchNativeAd!({
-                slot: SLOT_NAME,
-                opts: {
-                  offer_ids: this.productsIds.join(','),
-                  pos: index,
-                },
-                asyncRender: true,
-                div: div,
-                tplCode: TPL_CODE,
-              });
+            const trackingAdLink = ads.meta.adclick;
+            const dsaUrl = ads.meta.dsaurl;
+            const { offers = [] } = ads.fields.feed;
 
-              const trackingAdLink = ads.meta.adclick;
-              const dsaUrl = ads.meta.dsaurl;
-              const { offers = [] } = ads.fields.feed;
-
+            if (offers.length > 0) {
               const {
                 offer_id: productId,
                 offer_image: productImageUrl,
                 offer_url: productUrl,
               } = offers[0];
 
-              const preparedProduct = await this.prepareProductData({
-                dsaUrl,
+              return this.prepareProductData({
+                dsaUrl: dsaUrl,
                 imageUrl: productImageUrl,
                 offerUrl: trackingAdLink + productUrl,
                 offerId: productId,
-                div,
+                div: div,
+              }).then((preparedProduct) => {
+                if (!preparedProduct) return;
+
+                formattedProducts.push({
+                  ...preparedProduct,
+                  renderAd: ads.render,
+                });
               });
-
-              if (!preparedProduct) {
-                console.warn(`Product not found, ID: ${productId}`);
-                continue;
-              }
-
-              ads.render();
-              formattedProducts.push(preparedProduct);
             }
+          });
 
-            resolve(formattedProducts);
-          } catch {
+          fetchPromises.push(fetchPromise);
+        }
+
+        Promise.all(fetchPromises)
+          .then(() => resolve(formattedProducts))
+          .catch(() => {
             reject(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
-          }
-        });
-      },
-    );
+          });
+      });
+    });
 
-    return (await Promise.race([fetchNativeAd, timeoutPromise])
-      .then((result) => {
-        return result;
-      })
-      .catch((error) => {
-        throw new Error(error);
+    return (await Promise.race([fetchAds, timeoutPromise])
+      .then((res) => res)
+      .catch((err) => {
+        throw new Error(err);
       })) as TFormattedProduct[];
   };
 
@@ -157,14 +163,14 @@ class AdManager {
     return productHTMLWrapper.firstElementChild;
   };
 
-  private prepareProductData = async (product: TAdProduct) => {
+  private prepareProductData = async (
+    product: Omit<TAdProduct, 'renderAd'>,
+  ) => {
     const productElement = await this.getProductHTML(product.offerId);
 
     if (!productElement) return;
 
-    const productElementLink = productElement.querySelector(
-      '.woocommerce-loop-product__link',
-    );
+    const productElementLink = productElement.querySelector(LINK_SELECTOR);
 
     if (!productElementLink) {
       throw new Error(getMessage(LINK_SELECTOR_DOES_NOT_MATCH));
