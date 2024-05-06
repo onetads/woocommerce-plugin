@@ -64,17 +64,5 @@ if (isBlockTheme) {
     }
   };
 
-  if (document.readyState !== 'loading') {
-    runApp();
-  } else {
-    document.addEventListener('DOMContentLoaded', async () => {
-      runApp();
-    });
-  }
-
-  window.addEventListener('pageshow', (event) => {
-    if (event.persisted) {
-      runApp();
-    }
-  });
+  runApp();
 }

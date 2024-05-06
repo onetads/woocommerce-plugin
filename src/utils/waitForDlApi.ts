@@ -12,7 +12,11 @@ const waitForDlApi = async () => {
 
   const dlApiPromise = new Promise<void>((resolve) => {
     const intervalId = setInterval(() => {
-      if (window.dlApi.fetchNativeAd) {
+      if (
+        window.dlApi.fetchNativeAd &&
+        window.dlApi.keyvalues &&
+        window.dlApi.keyvalues.website_id
+      ) {
         clearInterval(intervalId);
         resolve();
       }

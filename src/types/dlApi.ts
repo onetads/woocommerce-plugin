@@ -1,11 +1,11 @@
 type TFetchNativeAdOptions = {
   slot: string;
   tplCode: string;
+  asyncRender: boolean;
+  div: string;
   opts: {
     offer_ids: string;
     pos: number;
-    asyncRender: boolean;
-    div: string;
   };
 };
 

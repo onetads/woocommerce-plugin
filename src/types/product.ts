@@ -10,6 +10,7 @@ type TFormattedProduct = {
   id: string;
   dsaUrl: string;
   productElement: Element;
+  renderAd: () => void;
 };
 
 export type { TAdProduct, TFormattedProduct };
