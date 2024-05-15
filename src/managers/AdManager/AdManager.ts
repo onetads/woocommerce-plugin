@@ -92,38 +92,47 @@ class AdManager {
             asyncRender: true,
             div: div,
             tplCode: TPL_CODE,
-          }).then((ads) => {
+          }).then(async (ads) => {
             if (!ads) {
               console.warn('Ad not found');
               return;
             }
 
-            const trackingAdLink = ads.meta.adclick;
-            const dsaUrl = ads.meta.dsaurl;
-            const { offers = [] } = ads.fields.feed;
+            let isAdAvailable = false;
+            let adIndex = 0;
 
-            if (offers.length > 0) {
-              const {
-                offer_id: productId,
-                offer_image: productImageUrl,
-                offer_url: productUrl,
-              } = offers[0];
+            do {
+              const trackingAdLink = ads.meta.adclick;
+              const dsaUrl = ads.meta.dsaurl;
+              const { offers = [] } = ads.fields.feed;
 
-              return this.prepareProductData({
-                dsaUrl: dsaUrl,
-                imageUrl: productImageUrl,
-                offerUrl: trackingAdLink + productUrl,
-                offerId: productId,
-                div: div,
-              }).then((preparedProduct) => {
-                if (!preparedProduct) return;
+              if (offers.length > 0) {
+                const {
+                  offer_id: productId,
+                  offer_image: productImageUrl,
+                  offer_url: productUrl,
+                } = offers[adIndex];
 
-                formattedProducts.push({
-                  ...preparedProduct,
-                  renderAd: ads.render,
+                const adData = await this.prepareProductData({
+                  dsaUrl: dsaUrl,
+                  imageUrl: productImageUrl,
+                  offerUrl: trackingAdLink + productUrl,
+                  offerId: productId,
+                  div: div,
                 });
-              });
-            }
+
+                if (adData) {
+                  isAdAvailable = true;
+
+                  formattedProducts.push({
+                    ...adData,
+                    renderAd: ads.render,
+                  });
+                }
+
+                adIndex++;
+              }
+            } while (!isAdAvailable);
           });
 
           fetchPromises.push(fetchPromise);
