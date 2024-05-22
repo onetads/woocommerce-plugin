@@ -1,4 +1,3 @@
-const TAG_CONTAINER_SELECTOR = '.woocommerce-loop-product__link';
 const TAG_CLASS = 'onsale';
 
 const DSA_ICON =
@@ -12,4 +11,4 @@ const DSA_ICON =
   '      </g>\n' +
   '    </svg>';
 
-export { TAG_CONTAINER_SELECTOR, TAG_CLASS, DSA_ICON };
+export { TAG_CLASS, DSA_ICON };

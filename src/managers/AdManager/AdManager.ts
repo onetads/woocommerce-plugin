@@ -6,7 +6,7 @@ import {
   REQUEST_TIMED_OUT,
 } from 'consts/messages';
 import {
-  LINK_SELECTOR,
+  LINK_SELECTORS,
   PRODUCTS_CONTAINER_SELECTOR,
   PRODUCTS_SELECTOR,
   SPONSORED_PRODUCT_TAG,
@@ -179,13 +179,15 @@ class AdManager {
 
     if (!productElement) return;
 
-    const productElementLink = productElement.querySelector(LINK_SELECTOR);
+    for (const linkSelector of LINK_SELECTORS) {
+      const productElementLink = productElement.querySelector(linkSelector);
 
-    if (!productElementLink) {
-      throw new Error(getMessage(LINK_SELECTOR_DOES_NOT_MATCH));
+      if (!productElementLink) {
+        throw new Error(getMessage(LINK_SELECTOR_DOES_NOT_MATCH));
+      }
+
+      productElementLink.setAttribute('href', product.offerUrl);
     }
-
-    productElementLink.setAttribute('href', product.offerUrl);
 
     productElement.id = product.div;
 

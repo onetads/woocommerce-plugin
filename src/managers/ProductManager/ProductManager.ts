@@ -3,11 +3,12 @@ import {
   PRODUCTS_CONTAINER_NOT_FOUND,
 } from 'consts/messages';
 import {
+  TAG_SELECTOR,
   ONET_PRODUCT_CLASS,
   PRODUCTS_CONTAINER_SELECTOR,
   PRODUCTS_SELECTOR,
 } from 'consts/products';
-import { DSA_ICON, TAG_CLASS, TAG_CONTAINER_SELECTOR } from 'consts/tags';
+import { DSA_ICON, TAG_CLASS } from 'consts/tags';
 import { TPages } from 'types/pages';
 import { TFormattedProduct } from 'types/product';
 import getMessage from 'utils/getMessage';
@@ -39,10 +40,13 @@ class ProductManager {
     productElement: Element,
     dsaUrl: string | undefined,
   ) => {
+    const tagClasses = window.sponsoredProductConfig?.tagClasses || TAG_CLASS;
+
     const labelElement = document.createElement('span');
-    labelElement.classList.add(TAG_CLASS);
+    labelElement.className = tagClasses;
     labelElement.style.display = 'inline-flex';
     labelElement.style.alignItems = 'center';
+    labelElement.style.flexDirection = 'row';
     labelElement.style.gap = '4px';
     labelElement.textContent = window.sponsoredProductConfig.tagLabel;
 
@@ -60,9 +64,9 @@ class ProductManager {
       tag.remove();
     });
 
-    (
-      productElement.querySelector(TAG_CONTAINER_SELECTOR) as HTMLElement
-    ).prepend(labelElement);
+    (productElement.querySelector(TAG_SELECTOR) as HTMLElement).prepend(
+      labelElement,
+    );
 
     return productElement as HTMLElement;
   };
@@ -87,7 +91,7 @@ class ProductManager {
     const containerClasses = Array.from(this.productsContainer.classList);
 
     const itemsInRow = containerClasses
-      .find((className) => className.startsWith('columns-'))
+      .find((className) => className.includes('columns-'))
       ?.match(/columns-(\d+)/)?.[1];
 
     if (!itemsInRow) {
@@ -107,6 +111,18 @@ class ProductManager {
     }
   };
 
+  private cleanUpProductElement = (productElement: Element) => {
+    const itemsToDelete = window.sponsoredProductConfig?.itemsToDelete || [];
+
+    for (const item of itemsToDelete) {
+      const itemElement = productElement.querySelector(item);
+
+      if (itemElement) {
+        itemElement.remove();
+      }
+    }
+  };
+
   public injectProducts = async (products: TFormattedProduct[]) => {
     this.resetRowStyles();
     this.deleteExistingSponsoredProducts();
@@ -117,6 +133,8 @@ class ProductManager {
       if (index >= productsCountToInject) break;
 
       this.deleteExistingProduct(product.id);
+
+      this.cleanUpProductElement(product.productElement);
 
       const markedProduct = this.addTagToProduct(
         product.productElement,
