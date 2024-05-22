@@ -64,5 +64,22 @@ if (isBlockTheme) {
     }
   };
 
-  runApp();
+  let isAppInitialized = false;
+
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+      isAppInitialized = true;
+      runApp();
+    } else {
+      if (!isAppInitialized) {
+        isAppInitialized = true;
+        runApp();
+      }
+    }
+  });
+
+  if (!isAppInitialized) {
+    isAppInitialized = true;
+    runApp();
+  }
 }
