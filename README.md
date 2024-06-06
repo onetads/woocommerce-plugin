@@ -27,8 +27,6 @@ yarn test - build minified js (code is bundled to dist/bundle.js file). This cod
 | `mainPage` | `object` | Configuration object for **main page** |
 | `pageDetails` | `object` | Configuration object for **product details page**|
 | `productsList` | `object` | Configuration object for **product list page** |
-| `tagClasses` | `string (Optional)` | Classes for tag label |
-| `itemsToDelete` | `string[] (Optional)` | Selectors for elements to delete |
 | `selectors` | `object (Optional)` | Configuration object for **selectors** |
 
 #### Configuration object for product listing, products details and main page
@@ -43,7 +41,6 @@ yarn test - build minified js (code is bundled to dist/bundle.js file). This cod
 | Key | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `views` | `object (Optional)` | Configuration object for **views selectors** |
-| `product` | `object (Optional)` | Configuration object for **product selectors** |
 
 #### Configuration object for views
 Selectors for views are exclusively needed for the script to determine the current page it is on.
@@ -53,15 +50,6 @@ Selectors for views are exclusively needed for the script to determine the curre
 | `mainPage` | `string (Optional)` | Specifies selector for main page  |
 | `productPage` | `string (Optional)` | Specifies selector for product page  |
 | `categoryPage` | `string (Optional)` | Specifies selector for category page  |
-
-#### Configuration object for selectors
-
-| Key | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `productsContainerSelector` | `string (Optional)` | Specifies selector for products container  |
-| `productsSelector` | `string (Optional)` | Specifies selector for product  |
-| `linkSelectors` | `string[] (Optional)` | Specifies selectors for links to change  |
-| `tagSelector` | `string (Optional)` | Specifies selector for tag where should appear  |
 
 #### Example Config
 
@@ -85,16 +73,7 @@ window.sponsoredProductConfig = {
     productsCount: 10,
   },
 
-  tagClasses: 'product-labels product-label featured',
-  itemsToDelete: ['div .labels-rounded', '.other-class'],
-
   selectors: {
-    product: {
-      productsContainerSelector: 'div[class^="products"]',
-      linkSelectors: ['.wd-quick-shop a', '.wd-entities-title a'],
-      productsSelector: 'div[class*="post-"]',
-      tagSelector: '.wd-quick-shop a',
-    },
     views: {
       categoryPage: '.example-category-page-class',
       mainPage: '.example-home-page-class',
