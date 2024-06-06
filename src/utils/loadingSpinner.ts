@@ -7,10 +7,7 @@ import {
   LOADING_SPINNER_STYLES,
 } from 'consts/loadingSpinner';
 import { COULDNT_GET_SPINNER_COLOR } from 'consts/messages';
-import {
-  PRODUCTS_CONTAINER_SELECTOR,
-  PRODUCTS_SELECTOR,
-} from 'consts/products';
+import { THTMLData } from 'types/HTMLData';
 import { TGetLoadingStylesArgs } from 'types/loadingSpinner';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
 import getMessage from 'utils/getMessage';
@@ -51,13 +48,13 @@ const getLoadingSpinnerStyles = ({
     ${LOADER_ANIMATION}
 `;
 
-const showLoadingSpinner = () => {
+const showLoadingSpinner = ({ productsContainerSelector }: THTMLData) => {
   const page = getCurrentPageInfo();
 
   if (!page) return;
 
   const productsContainer = document.querySelector(
-    PRODUCTS_CONTAINER_SELECTOR,
+    productsContainerSelector,
   ) as HTMLElement;
 
   if (!productsContainer) return;
@@ -92,7 +89,10 @@ const showLoadingSpinner = () => {
   productsContainer.appendChild(loadingSpinnerContainer);
 };
 
-const hideLoadingSpinner = () => {
+const hideLoadingSpinner = ({
+  productsContainerSelector,
+  productSelector,
+}: THTMLData) => {
   const loadingSpinnerContainer = document.querySelector(
     `.${LOADING_SPINNER_CONTAINER_CLASS}`,
   );
@@ -100,14 +100,14 @@ const hideLoadingSpinner = () => {
   loadingSpinnerContainer?.remove();
 
   const productsContainer = document.querySelector(
-    PRODUCTS_CONTAINER_SELECTOR,
+    productsContainerSelector,
   ) as HTMLElement;
 
   productsContainer.style.position = 'static';
   productsContainer.style.overflow = 'visible';
 
   const productElements = Array.from(
-    productsContainer.querySelectorAll(PRODUCTS_SELECTOR),
+    productsContainer.querySelectorAll(productSelector),
   ) as HTMLElement[];
 
   for (const productElement of productElements) {

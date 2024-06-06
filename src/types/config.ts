@@ -17,12 +17,6 @@ type TSponsoredProductConfig = {
       productPage?: string;
       categoryPage?: string;
     };
-    product?: {
-      productsContainerSelector?: string;
-      productsSelector?: string;
-      linkSelectors?: string[];
-      tagSelector?: string;
-    };
   };
 
   tagClasses?: string;

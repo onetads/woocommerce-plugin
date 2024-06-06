@@ -1,18 +1,20 @@
 import { EMPTY_LIST_WARN } from 'consts/messages';
-import {
-  PRODUCTS_CONTAINER_SELECTOR,
-  PRODUCTS_SELECTOR,
-} from 'consts/products';
+import {} from 'consts/products';
 import AdManager from 'managers/AdManager/AdManager';
+import { THTMLData } from 'types/HTMLData';
 import { TPages } from 'types/pages';
 import getMessage from 'utils/getMessage';
 
-const initAdManager = (page: TPages) => new AdManager(page);
+const initAdManager = (page: TPages, HTMLData: THTMLData) =>
+  new AdManager(page, HTMLData);
 
-const getProductsIds = () => {
+const getProductsIds = (
+  productsContainerSelector: string,
+  productSelector: string,
+) => {
   const productElements = Array.from(
     document.querySelectorAll(
-      `${PRODUCTS_CONTAINER_SELECTOR} ${PRODUCTS_SELECTOR}`,
+      `${productsContainerSelector} ${productSelector}`,
     ),
   );
 
