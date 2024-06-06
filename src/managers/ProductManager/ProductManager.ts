@@ -2,13 +2,8 @@ import {
   COULDNT_FIND_NUMBER_OF_ITEMS_IN_ROW,
   PRODUCTS_CONTAINER_NOT_FOUND,
 } from 'consts/messages';
-import {
-  TAG_SELECTOR,
-  ONET_PRODUCT_CLASS,
-  PRODUCTS_CONTAINER_SELECTOR,
-  PRODUCTS_SELECTOR,
-} from 'consts/products';
-import { DSA_ICON, TAG_CLASS } from 'consts/tags';
+import { DSA_ICON_CLASS, ONET_PRODUCT_CLASS } from 'consts/products';
+import { THTMLData } from 'types/HTMLData';
 import { TPages } from 'types/pages';
 import { TFormattedProduct } from 'types/product';
 import getMessage from 'utils/getMessage';
@@ -18,13 +13,15 @@ class ProductManager {
   private page: TPages;
   private productsContainer: Element;
   private productElements: Element[];
+  private productSelector: string;
 
-  constructor(page: TPages) {
+  constructor(page: TPages, HTMLData: THTMLData) {
+    const { productSelector, productsContainerSelector } = HTMLData;
+
     this.page = page;
+    this.productSelector = productSelector;
 
-    const productsContainer = document.querySelector(
-      PRODUCTS_CONTAINER_SELECTOR,
-    );
+    const productsContainer = document.querySelector(productsContainerSelector);
 
     if (!productsContainer) {
       throw new Error(getMessage(PRODUCTS_CONTAINER_NOT_FOUND));
@@ -32,44 +29,9 @@ class ProductManager {
 
     this.productsContainer = productsContainer;
     this.productElements = Array.from(
-      this.productsContainer.querySelectorAll(PRODUCTS_SELECTOR),
+      this.productsContainer.querySelectorAll(this.productSelector),
     );
   }
-
-  private addTagToProduct = (
-    productElement: Element,
-    dsaUrl: string | undefined,
-  ) => {
-    const tagClasses = window.sponsoredProductConfig?.tagClasses || TAG_CLASS;
-
-    const labelElement = document.createElement('span');
-    labelElement.className = tagClasses;
-    labelElement.style.display = 'inline-flex';
-    labelElement.style.alignItems = 'center';
-    labelElement.style.flexDirection = 'row';
-    labelElement.style.gap = '4px';
-    labelElement.textContent = window.sponsoredProductConfig.tagLabel;
-
-    if (dsaUrl) {
-      const dsaIcon = document.createElement('a');
-      dsaIcon.innerHTML = DSA_ICON;
-      dsaIcon.target = '_blank';
-      dsaIcon.href = dsaUrl;
-      dsaIcon.style.color = 'inherit';
-      dsaIcon.style.lineHeight = '1em';
-      labelElement.appendChild(dsaIcon);
-    }
-
-    productElement.querySelectorAll(`.${TAG_CLASS}`).forEach((tag) => {
-      tag.remove();
-    });
-
-    (productElement.querySelector(TAG_SELECTOR) as HTMLElement).prepend(
-      labelElement,
-    );
-
-    return productElement as HTMLElement;
-  };
 
   private deleteExistingProduct = (id: string) => {
     this.productsContainer.querySelector(`.post-${id}`)?.remove();
@@ -86,7 +48,7 @@ class ProductManager {
 
   private regenerateRowStyles = () => {
     const productElements = Array.from(
-      this.productsContainer.querySelectorAll(PRODUCTS_SELECTOR),
+      this.productsContainer.querySelectorAll(this.productSelector),
     );
     const containerClasses = Array.from(this.productsContainer.classList);
 
@@ -111,18 +73,6 @@ class ProductManager {
     }
   };
 
-  private cleanUpProductElement = (productElement: Element) => {
-    const itemsToDelete = window.sponsoredProductConfig?.itemsToDelete || [];
-
-    for (const item of itemsToDelete) {
-      const itemElement = productElement.querySelector(item);
-
-      if (itemElement) {
-        itemElement.remove();
-      }
-    }
-  };
-
   public injectProducts = async (products: TFormattedProduct[]) => {
     this.resetRowStyles();
     this.deleteExistingSponsoredProducts();
@@ -134,19 +84,35 @@ class ProductManager {
 
       this.deleteExistingProduct(product.id);
 
-      this.cleanUpProductElement(product.productElement);
-
-      const markedProduct = this.addTagToProduct(
-        product.productElement,
-        product.dsaUrl,
+      const dsaIconElement = product.productElement.querySelector(
+        `.${DSA_ICON_CLASS}`,
       );
-      markedProduct.classList.remove('first');
-      markedProduct.classList.add(ONET_PRODUCT_CLASS);
-      this.productsContainer.prepend(markedProduct);
+
+      if (dsaIconElement) {
+        dsaIconElement.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.open(product.dsaUrl, '_blank')?.focus();
+        });
+
+        const dsaIconWrapper = dsaIconElement.parentElement as HTMLElement;
+        dsaIconWrapper.style.display = 'inline-flex';
+        dsaIconWrapper.style.alignItems = 'center';
+        dsaIconWrapper.style.gap = '4px';
+        dsaIconWrapper.style.wordBreak = 'keep-all';
+        dsaIconWrapper.style.padding = '0 4px';
+      }
+
+      product.productElement.classList.remove('first');
+      product.productElement.classList.add(ONET_PRODUCT_CLASS);
+      this.productsContainer.prepend(product.productElement);
       product.renderAd();
     }
 
     this.regenerateRowStyles();
+
+    if (window?.woodmartThemeModule?.productHover) {
+      window.woodmartThemeModule.productHover();
+    }
   };
 
   public deleteExistingSponsoredProducts = () => {

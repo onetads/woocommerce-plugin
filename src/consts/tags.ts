@@ -1,5 +1,3 @@
-const TAG_CLASS = 'onsale';
-
 const DSA_ICON =
   '<svg style="width: 1em; height: 1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 27.964 27.964" xml:space="preserve">\n' +
   '        <g>\n' +
@@ -11,4 +9,4 @@ const DSA_ICON =
   '      </g>\n' +
   '    </svg>';
 
-export { TAG_CLASS, DSA_ICON };
+export { DSA_ICON };

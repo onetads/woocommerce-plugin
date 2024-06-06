@@ -2,17 +2,17 @@ import { MAX_TIMEOUT_MS, SLOT_NAME, TPL_CODE } from 'consts/dlApi';
 import {
   EMPTY_PRODUCTS_LIST,
   ERROR_PROMOTED_PRODUCTS_MSG,
-  LINK_SELECTOR_DOES_NOT_MATCH,
   REQUEST_TIMED_OUT,
 } from 'consts/messages';
 import {
-  LINK_SELECTORS,
-  PRODUCTS_CONTAINER_SELECTOR,
-  PRODUCTS_SELECTOR,
+  DSA_ICON_CLASS,
   SPONSORED_PRODUCT_TAG,
+  TAG_REPLACEMENT_KEY,
 } from 'consts/products';
+import { DSA_ICON } from 'consts/tags';
 import { VIEWS_MAP } from 'consts/views';
 import { getProductsIds } from 'managers/AdManager/AdManager.util';
+import { THTMLData, TProductDataResponse } from 'types/HTMLData';
 import { TPages } from 'types/pages';
 import { TAdProduct, TFormattedProduct } from 'types/product';
 import getMessage from 'utils/getMessage';
@@ -21,20 +21,38 @@ import getProductsCountToInject from 'utils/getProductCountToInject';
 class AdManager {
   private page: TPages;
   private productsIds: number[];
+  private productSelector: string;
+  private productsContainerSelector: string;
+  private tagTemplate: string;
+  private tagReplacement: string;
 
-  constructor(page: TPages) {
+  constructor(page: TPages, HTMLData: THTMLData) {
+    const {
+      productSelector,
+      productsContainerSelector,
+      originalPromoTagHTML,
+      substitutePromoTagHTML,
+    } = HTMLData;
+
     this.page = page;
+    this.productSelector = productSelector;
+    this.productsContainerSelector = productsContainerSelector;
+    this.tagTemplate = originalPromoTagHTML;
+    this.tagReplacement = substitutePromoTagHTML;
 
     if (this.page) {
-      this.productsIds = getProductsIds();
+      this.productsIds = getProductsIds(
+        this.productsContainerSelector,
+        this.productSelector,
+      );
     }
   }
 
   public getPromotedProducts = async (isTestingEnvironment: boolean) => {
     if (isTestingEnvironment) {
       const products = document
-        .querySelector(PRODUCTS_CONTAINER_SELECTOR)!
-        .querySelectorAll(PRODUCTS_SELECTOR);
+        .querySelector(this.productsContainerSelector)!
+        .querySelectorAll(this.productSelector);
 
       if (products.length === 0) {
         throw new Error(getMessage(EMPTY_PRODUCTS_LIST));
@@ -153,7 +171,11 @@ class AdManager {
       })) as TFormattedProduct[];
   };
 
-  public getProductHTML = async (id: string) => {
+  public getProductElement = async (
+    id: string,
+    offerUrl: string,
+    dsaUrl: string | undefined,
+  ): Promise<Element | null> => {
     const view = VIEWS_MAP[this.page];
 
     const response = await fetch(
@@ -164,30 +186,46 @@ class AdManager {
       return null;
     }
 
-    const productHTMLString = await response.text();
+    const { link_url: productDetailsLink, product_html: productHTML } =
+      (await response.json()) as TProductDataResponse;
+
+    const productHTMLwithTrackingLinks = productHTML.replaceAll(
+      productDetailsLink,
+      offerUrl,
+    );
+
+    let tagContent = window.sponsoredProductConfig.tagLabel;
+
+    if (dsaUrl) {
+      tagContent = `${tagContent} <span class="${DSA_ICON_CLASS}" style="line-height: 1em; color: inherit;">${DSA_ICON}</span>`;
+    }
+
+    const newTagLabel = this.tagReplacement.replace(
+      TAG_REPLACEMENT_KEY,
+      tagContent,
+    );
+
+    const productHTMLwithSponsoredTag = productHTMLwithTrackingLinks.replace(
+      this.tagTemplate,
+      newTagLabel.trim(),
+    );
 
     const productHTMLWrapper = document.createElement('div');
-    productHTMLWrapper.innerHTML = productHTMLString;
+    productHTMLWrapper.innerHTML = productHTMLwithSponsoredTag;
 
-    return productHTMLWrapper.firstElementChild;
+    return productHTMLWrapper.firstElementChild as Element;
   };
 
   private prepareProductData = async (
     product: Omit<TAdProduct, 'renderAd'>,
   ) => {
-    const productElement = await this.getProductHTML(product.offerId);
+    const productElement = await this.getProductElement(
+      product.offerId,
+      product.offerUrl,
+      product.dsaUrl,
+    );
 
     if (!productElement) return;
-
-    for (const linkSelector of LINK_SELECTORS) {
-      const productElementLink = productElement.querySelector(linkSelector);
-
-      if (!productElementLink) {
-        throw new Error(getMessage(LINK_SELECTOR_DOES_NOT_MATCH));
-      }
-
-      productElementLink.setAttribute('href', product.offerUrl);
-    }
 
     productElement.id = product.div;
 
