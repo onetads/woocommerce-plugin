@@ -37,11 +37,11 @@ const getLoadingSpinnerStyles = ({
 }: TGetLoadingStylesArgs) => `
     .${LOADING_SPINNER_CONTAINER_CLASS} {
         ${LOADING_SPINNER_CONTAINER_STYLES}
-        background-color: ${bgColor};
+        background-color: ${bgColor === 'rgba(0, 0, 0, 0)' ? 'white' : bgColor};
     }
 
     .${LOADING_SPINNER_CLASS} {
-      border-color: ${spinnerColor};
+      border-color: ${bgColor === 'rgba(0, 0, 0, 0)' ? 'black' : spinnerColor};
       ${LOADING_SPINNER_STYLES}
     }
 

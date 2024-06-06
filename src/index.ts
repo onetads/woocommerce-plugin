@@ -1,11 +1,12 @@
 import { DEFAULT_CONFIG } from 'consts/config';
 import { NOT_SUPPORTED_THEME } from 'consts/messages';
 import { BLOCK_THEME_CLASS } from 'consts/pages';
+import { HTML_DATA_KEY } from 'consts/products';
 import { initAdManager } from 'managers/AdManager/AdManager.util';
 import { initProductManager } from 'managers/ProductManager/ProductManager.utils';
 import { THTMLData } from 'types/HTMLData';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
-import getHTMLData from 'utils/getHtmlData';
+import getHTMLData from 'utils/getHTMLData';
 import getMessage from 'utils/getMessage';
 import getPageConfig from 'utils/getPageConfig';
 import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
@@ -51,6 +52,7 @@ if (isBlockTheme) {
       if (e instanceof Error) {
         console.error(e.message);
         hideLoadingSpinner(HTMLData);
+        localStorage.removeItem(HTML_DATA_KEY);
       }
     }
   };

@@ -18,9 +18,6 @@ type TSponsoredProductConfig = {
       categoryPage?: string;
     };
   };
-
-  tagClasses?: string;
-  itemsToDelete?: string[];
 };
 
 export type { TSponsoredProductConfig };

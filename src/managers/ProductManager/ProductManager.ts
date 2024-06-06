@@ -73,18 +73,6 @@ class ProductManager {
     }
   };
 
-  private cleanUpProductElement = (productElement: Element) => {
-    const itemsToDelete = window.sponsoredProductConfig?.itemsToDelete || [];
-
-    for (const item of itemsToDelete) {
-      const itemElement = productElement.querySelector(item);
-
-      if (itemElement) {
-        itemElement.remove();
-      }
-    }
-  };
-
   public injectProducts = async (products: TFormattedProduct[]) => {
     this.resetRowStyles();
     this.deleteExistingSponsoredProducts();
@@ -95,8 +83,6 @@ class ProductManager {
       if (index >= productsCountToInject) break;
 
       this.deleteExistingProduct(product.id);
-
-      this.cleanUpProductElement(product.productElement);
 
       const dsaIconElement = product.productElement.querySelector(
         `.${DSA_ICON_CLASS}`,
@@ -112,6 +98,8 @@ class ProductManager {
         dsaIconWrapper.style.display = 'inline-flex';
         dsaIconWrapper.style.alignItems = 'center';
         dsaIconWrapper.style.gap = '4px';
+        dsaIconWrapper.style.wordBreak = 'keep-all';
+        dsaIconWrapper.style.padding = '0 4px';
       }
 
       product.productElement.classList.remove('first');
@@ -121,6 +109,10 @@ class ProductManager {
     }
 
     this.regenerateRowStyles();
+
+    if (window?.woodmartThemeModule?.productHover) {
+      window.woodmartThemeModule.productHover();
+    }
   };
 
   public deleteExistingSponsoredProducts = () => {

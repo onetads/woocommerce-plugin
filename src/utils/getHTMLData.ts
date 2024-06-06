@@ -1,7 +1,8 @@
+import { HTML_DATA_KEY } from 'consts/products';
 import { THTMLData, THTMLDataResponse } from 'types/HTMLData';
 
 const getHTMLData = async () => {
-  const savedData = localStorage.getItem('HTMLData');
+  const savedData = localStorage.getItem(HTML_DATA_KEY);
 
   if (savedData) {
     return JSON.parse(savedData) as THTMLData;
@@ -20,7 +21,7 @@ const getHTMLData = async () => {
     substitutePromoTagHTML: parsedData.substitute_promo_tag,
   } as THTMLData;
 
-  localStorage.setItem('HTMLData', JSON.stringify(data));
+  localStorage.setItem(HTML_DATA_KEY, JSON.stringify(data));
 
   return data;
 };
