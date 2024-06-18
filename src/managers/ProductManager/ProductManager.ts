@@ -6,6 +6,7 @@ import { DSA_ICON_CLASS, ONET_PRODUCT_CLASS } from 'consts/products';
 import { THTMLData } from 'types/HTMLData';
 import { TPages } from 'types/pages';
 import { TFormattedProduct } from 'types/product';
+import { TTheme } from 'types/themeMap';
 import getMessage from 'utils/getMessage';
 import getProductsCountToInject from 'utils/getProductCountToInject';
 
@@ -14,10 +15,16 @@ class ProductManager {
   private productsContainer: Element;
   private productElements: Element[];
   private productSelector: string;
+  private themeInfo: TTheme | undefined;
 
-  constructor(page: TPages, HTMLData: THTMLData) {
+  constructor(
+    page: TPages,
+    HTMLData: THTMLData,
+    themeInfo: TTheme | undefined,
+  ) {
     const { productSelector, productsContainerSelector } = HTMLData;
 
+    this.themeInfo = themeInfo;
     this.page = page;
     this.productSelector = productSelector;
 
@@ -34,7 +41,13 @@ class ProductManager {
   }
 
   private deleteExistingProduct = (id: string) => {
-    this.productsContainer.querySelector(`.post-${id}`)?.remove();
+    const element = this.productsContainer.querySelector(
+      `.post-${id}`,
+    ) as HTMLElement;
+
+    this.themeInfo?.[this.page]?.onExistingProductRemove?.(element);
+
+    element?.remove();
   };
 
   private resetRowStyles = () => {
@@ -74,6 +87,16 @@ class ProductManager {
   };
 
   public injectProducts = async (products: TFormattedProduct[]) => {
+    const additionalProductClasses =
+      this.themeInfo?.[this.page]?.additionalProductClasses;
+    const themeShouldRegenerateRows =
+      this.themeInfo?.[this.page]?.shouldRegenerateRows;
+
+    const shouldRegenerateRows =
+      themeShouldRegenerateRows !== undefined
+        ? themeShouldRegenerateRows
+        : true;
+
     this.resetRowStyles();
     this.deleteExistingSponsoredProducts();
 
@@ -98,21 +121,35 @@ class ProductManager {
         dsaIconWrapper.style.display = 'inline-flex';
         dsaIconWrapper.style.alignItems = 'center';
         dsaIconWrapper.style.gap = '4px';
+        dsaIconWrapper.style.cursor = 'pointer';
+        dsaIconWrapper.style.position = 'relative';
+        dsaIconWrapper.style.zIndex = '999';
         dsaIconWrapper.style.wordBreak = 'keep-all';
         dsaIconWrapper.style.padding = '0 4px';
       }
 
       product.productElement.classList.remove('first');
       product.productElement.classList.add(ONET_PRODUCT_CLASS);
+
+      if (additionalProductClasses) {
+        for (const className of additionalProductClasses) {
+          product.productElement.classList.add(className);
+        }
+      }
+
+      this.themeInfo?.[this.page]?.onBeforeProductInject?.(
+        product.productElement as HTMLElement,
+        product,
+      );
       this.productsContainer.prepend(product.productElement);
       product.renderAd();
     }
 
-    this.regenerateRowStyles();
-
-    if (window?.woodmartThemeModule?.productHover) {
-      window.woodmartThemeModule.productHover();
+    if (shouldRegenerateRows) {
+      this.regenerateRowStyles();
     }
+
+    this.themeInfo?.[this.page]?.onProductsInjected?.();
   };
 
   public deleteExistingSponsoredProducts = () => {

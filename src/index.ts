@@ -1,14 +1,17 @@
 import { DEFAULT_CONFIG } from 'consts/config';
 import { NOT_SUPPORTED_THEME } from 'consts/messages';
 import { BLOCK_THEME_CLASS } from 'consts/pages';
-import { HTML_DATA_KEY } from 'consts/products';
 import { initAdManager } from 'managers/AdManager/AdManager.util';
 import { initProductManager } from 'managers/ProductManager/ProductManager.utils';
 import { THTMLData } from 'types/HTMLData';
+import { TPages } from 'types/pages';
+import { TTheme } from 'types/themeMap';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
 import getHTMLData from 'utils/getHTMLData';
+import getHTMLDataStorageKey from 'utils/getHTMLDataStorageKey';
 import getMessage from 'utils/getMessage';
 import getPageConfig from 'utils/getPageConfig';
+import getThemeInfo from 'utils/getThemeInfo';
 import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
 import waitForDlApi from 'utils/waitForDlApi';
 
@@ -22,18 +25,21 @@ if (isBlockTheme) {
   console.error(getMessage(NOT_SUPPORTED_THEME));
 } else {
   let HTMLData: THTMLData;
+  let themeInfo: TTheme | undefined;
+  let page: TPages | undefined;
 
   const runApp = async () => {
     try {
-      const page = getCurrentPageInfo();
+      page = getCurrentPageInfo();
 
       if (!page) return;
       if (getPageConfig(page)?.isEnabled === false) return;
 
-      HTMLData = await getHTMLData();
+      themeInfo = getThemeInfo();
+      HTMLData = await getHTMLData(page, themeInfo);
 
       if (window.sponsoredProductConfig.isLoaderVisible) {
-        showLoadingSpinner(HTMLData);
+        showLoadingSpinner(HTMLData.productsContainerSelector, themeInfo);
       }
 
       if (!isTestingEnvironment) {
@@ -44,15 +50,18 @@ if (isBlockTheme) {
       const products =
         await AdManager.getPromotedProducts(isTestingEnvironment);
 
-      const ProductManager = initProductManager(page, HTMLData);
+      const ProductManager = initProductManager(page, HTMLData, themeInfo);
 
       ProductManager.injectProducts(products);
-      hideLoadingSpinner(HTMLData);
+      hideLoadingSpinner(HTMLData, themeInfo);
     } catch (e) {
       if (e instanceof Error) {
         console.error(e.message);
-        hideLoadingSpinner(HTMLData);
-        localStorage.removeItem(HTML_DATA_KEY);
+        hideLoadingSpinner(HTMLData, themeInfo);
+
+        if (page) {
+          localStorage.removeItem(getHTMLDataStorageKey(page));
+        }
       }
     }
   };
