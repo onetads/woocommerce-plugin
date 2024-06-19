@@ -9,6 +9,7 @@ import {
 import { COULDNT_GET_SPINNER_COLOR } from 'consts/messages';
 import { THTMLData } from 'types/HTMLData';
 import { TGetLoadingStylesArgs } from 'types/loadingSpinner';
+import { TTheme } from 'types/themeMap';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
 import getMessage from 'utils/getMessage';
 
@@ -48,13 +49,25 @@ const getLoadingSpinnerStyles = ({
     ${LOADER_ANIMATION}
 `;
 
-const showLoadingSpinner = ({ productsContainerSelector }: THTMLData) => {
-  const page = getCurrentPageInfo();
+const showLoadingSpinner = (
+  productsContainerSelector: THTMLData['productsContainerSelector'],
+  themeInfo: TTheme | undefined,
+) => {
+  let containerSelector = productsContainerSelector;
 
+  const page = getCurrentPageInfo();
   if (!page) return;
 
+  const spinnerContainerSelector = themeInfo?.[page]?.spinnerContainerSelector;
+
+  if (spinnerContainerSelector) {
+    containerSelector = spinnerContainerSelector;
+  }
+
+  themeInfo?.[page]?.onSpinnerStart?.();
+
   const productsContainer = document.querySelector(
-    productsContainerSelector,
+    containerSelector,
   ) as HTMLElement;
 
   if (!productsContainer) return;
@@ -86,13 +99,25 @@ const showLoadingSpinner = ({ productsContainerSelector }: THTMLData) => {
   loadingSpinnerContainer.appendChild(loadingSpinner);
 
   document.body.appendChild(spinnerStyles);
-  productsContainer.appendChild(loadingSpinnerContainer);
+  productsContainer.prepend(loadingSpinnerContainer);
 };
 
-const hideLoadingSpinner = ({
-  productsContainerSelector,
-  productSelector,
-}: THTMLData) => {
+const hideLoadingSpinner = (
+  HTMLData: THTMLData,
+  themeInfo: TTheme | undefined,
+) => {
+  const { productsContainerSelector, productSelector } = HTMLData;
+  let containerSelector = productsContainerSelector;
+
+  const page = getCurrentPageInfo();
+  if (!page) return;
+
+  const spinnerContainerSelector = themeInfo?.[page]?.spinnerContainerSelector;
+
+  if (spinnerContainerSelector) {
+    containerSelector = spinnerContainerSelector;
+  }
+
   const loadingSpinnerContainer = document.querySelector(
     `.${LOADING_SPINNER_CONTAINER_CLASS}`,
   );
@@ -100,7 +125,7 @@ const hideLoadingSpinner = ({
   loadingSpinnerContainer?.remove();
 
   const productsContainer = document.querySelector(
-    productsContainerSelector,
+    containerSelector,
   ) as HTMLElement;
 
   productsContainer.style.position = 'static';
@@ -113,6 +138,8 @@ const hideLoadingSpinner = ({
   for (const productElement of productElements) {
     productElement.style.visibility = 'visible';
   }
+
+  themeInfo?.[page]?.onSpinnerHide?.();
 };
 
 export { showLoadingSpinner, hideLoadingSpinner };
