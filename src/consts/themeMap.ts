@@ -1,3 +1,4 @@
+import { CATEGORY_PAGE, MAIN_PAGE, PRODUCT_PAGE } from 'consts/pages';
 import { TSwiper } from 'types/swiper';
 import { TTheme } from 'types/themeMap';
 import { changeBadgeStyles } from 'utils/themeMapUtils';
@@ -6,7 +7,7 @@ const THEME_MAP: TTheme[] = [
   {
     selector: 'body:is(.theme-flatsome)',
     skin: 'flatsome',
-    PRODUCT_PAGE: {
+    [PRODUCT_PAGE]: {
       productsContainerSelector: '.related-products-wrapper .flickity-slider',
       spinnerContainerSelector: '.related-products-wrapper',
       shouldRegenerateRows: false,
@@ -20,7 +21,7 @@ const THEME_MAP: TTheme[] = [
       },
     },
 
-    MAIN_PAGE: {
+    [MAIN_PAGE]: {
       onProductsInjected: () => {
         window.Flatsome.behaviors['quick-view'].attach();
 
@@ -28,7 +29,7 @@ const THEME_MAP: TTheme[] = [
       },
     },
 
-    CATEGORY_PAGE: {
+    [CATEGORY_PAGE]: {
       onProductsInjected: () => {
         window.Flatsome.behaviors['quick-view'].attach();
 
@@ -39,14 +40,14 @@ const THEME_MAP: TTheme[] = [
   {
     selector: 'body:is(.theme-woodmart)',
     skin: 'woodmart',
-    MAIN_PAGE: {
+    [MAIN_PAGE]: {
       onProductsInjected: () => {
         if (window?.woodmartThemeModule?.productHover) {
           window.woodmartThemeModule.productHover();
         }
       },
     },
-    PRODUCT_PAGE: {
+    [PRODUCT_PAGE]: {
       productsContainerSelector: '.related-products .wd-carousel-wrap',
       spinnerContainerSelector: '.related-products',
       shouldRegenerateRows: false,
@@ -91,7 +92,7 @@ const THEME_MAP: TTheme[] = [
         }
       },
     },
-    CATEGORY_PAGE: {
+    [CATEGORY_PAGE]: {
       onProductsInjected: () => {
         if (window?.woodmartThemeModule?.productHover) {
           window.woodmartThemeModule.productHover();
