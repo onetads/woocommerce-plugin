@@ -8,6 +8,7 @@ const COULDNT_FIND_NUMBER_OF_ITEMS_IN_ROW =
 const COULDNT_GET_SPINNER_COLOR = 'COULDNT_GET_SPINNER_COLOR';
 const NOT_SUPPORTED_THEME = 'NOT_SUPPORTED_THEME';
 const EMPTY_PRODUCTS_LIST = 'EMPTY_PRODUCTS_LIST';
+const COULDNT_READ_THEME = 'COULDNT_READ_THEME';
 
 const messagesMap = {
   [PRODUCTS_CONTAINER_NOT_FOUND]: 'Products container not found',
@@ -20,6 +21,7 @@ const messagesMap = {
   [COULDNT_GET_SPINNER_COLOR]: "Couldn't get spinner color",
   [NOT_SUPPORTED_THEME]: 'Block themes are not supported',
   [EMPTY_PRODUCTS_LIST]: 'Empty products list',
+  [COULDNT_READ_THEME]: "Couldn't read theme",
 };
 
 export {
@@ -33,4 +35,5 @@ export {
   COULDNT_GET_SPINNER_COLOR,
   NOT_SUPPORTED_THEME,
   EMPTY_PRODUCTS_LIST,
+  COULDNT_READ_THEME,
 };
