@@ -9,8 +9,6 @@ const changeBadgeStyles = () => {
 
   if (badges && badges.length > 0) {
     badges.forEach((badge) => {
-      console.log(badge);
-
       badge.style.pointerEvents = 'auto';
     });
   }

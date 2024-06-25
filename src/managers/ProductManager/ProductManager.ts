@@ -2,7 +2,11 @@ import {
   COULDNT_FIND_NUMBER_OF_ITEMS_IN_ROW,
   PRODUCTS_CONTAINER_NOT_FOUND,
 } from 'consts/messages';
-import { DSA_ICON_CLASS, ONET_PRODUCT_CLASS } from 'consts/products';
+import {
+  DSA_ICON_CLASS,
+  ONET_PRODUCT_CLASS,
+  TAG_LABEL_HOOK_CLASS,
+} from 'consts/products';
 import { THTMLData } from 'types/HTMLData';
 import { TPages } from 'types/pages';
 import { TFormattedProduct } from 'types/product';
@@ -107,27 +111,6 @@ class ProductManager {
 
       this.deleteExistingProduct(product.id);
 
-      const dsaIconElement = product.productElement.querySelector(
-        `.${DSA_ICON_CLASS}`,
-      );
-
-      if (dsaIconElement) {
-        dsaIconElement.addEventListener('click', (e) => {
-          e.preventDefault();
-          window.open(product.dsaUrl, '_blank')?.focus();
-        });
-
-        const dsaIconWrapper = dsaIconElement.parentElement as HTMLElement;
-        dsaIconWrapper.style.display = 'inline-flex';
-        dsaIconWrapper.style.alignItems = 'center';
-        dsaIconWrapper.style.gap = '4px';
-        dsaIconWrapper.style.cursor = 'pointer';
-        dsaIconWrapper.style.position = 'relative';
-        dsaIconWrapper.style.zIndex = '999';
-        dsaIconWrapper.style.wordBreak = 'keep-all';
-        dsaIconWrapper.style.padding = '0 4px';
-      }
-
       product.productElement.classList.remove('first');
       product.productElement.classList.add(ONET_PRODUCT_CLASS);
 
@@ -143,6 +126,30 @@ class ProductManager {
       );
       this.productsContainer.prepend(product.productElement);
       product.renderAd();
+
+      const dsaIconElement = product.productElement.querySelector(
+        `.${DSA_ICON_CLASS}`,
+      );
+      const tagElementHook = product.productElement.querySelector(
+        `.${TAG_LABEL_HOOK_CLASS}`,
+      ) as HTMLDivElement;
+      tagElementHook.style.display = 'none';
+
+      const tagWrapper = tagElementHook.parentElement as HTMLDivElement;
+
+      tagWrapper.style.display = 'inline-flex';
+      tagWrapper.style.alignItems = 'center';
+      tagWrapper.style.gap = '4px';
+      tagWrapper.style.cursor = 'pointer';
+      tagWrapper.style.zIndex = '999';
+      tagWrapper.style.wordBreak = 'keep-all';
+
+      if (dsaIconElement) {
+        dsaIconElement.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.open(product.dsaUrl, '_blank')?.focus();
+        });
+      }
     }
 
     if (shouldRegenerateRows) {
