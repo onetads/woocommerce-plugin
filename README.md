@@ -83,3 +83,28 @@ window.sponsoredProductConfig = {
 };
 
 ```
+
+## Theme Map
+
+Theme map is located in `src/consts/themeMap.ts`
+
+| Key | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `selector` | `string` | A selector used to verify if the current website's theme matches a specified criteria. This selector checks for the presence of a specific theme-related element or class in the document to determine the active theme. |
+| `skin` | `boolean` | Skin name |
+| `MAIN_PAGE` | `object` | Page options object |
+| `PRODUCT_PAGE` | `object` | Page options object |
+| `CATEGORY_PAGE` | `object` | Page options object |
+
+#### Page options object
+
+| Key | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `productsContainerSelector` | `string (Optional)` | Specify selector for products container |
+| `spinnerContainerSelector` | `string (Optional)` | Specify selector for spinner container |
+| `shouldRegenerateRows` | `boolean (Optional)` | Determines whether rows should be regenerated. By default, the plugin regenerates rows. Regenerating rows is necessary and responsible for the correct positioning of products in listings. Sometimes there may be a need to disable regenerating rows because the HTML of the listing may not have information about rows in the classes, which leads to the script stopping working. |
+| `additionalProductClasses` | `string[] (Optional)` | An array of additional classes to be added to the product element |
+| `onBeforeProductInject` | `function(productElement, productData) (Optional)` | Function which is triggered before sponsored product is injected into the DOM |
+| `onProductsInjected` | `string (Optional)` | Function which is triggered after **all** sponsored products are injected into the DOM  |
+| `onExistingProductRemove` | `function(elementToDelete) (Optional)` | Function which is triggered before deleting existing product in DOM with the same ID as sponsored product |
+

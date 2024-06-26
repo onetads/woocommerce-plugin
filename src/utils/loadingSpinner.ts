@@ -64,8 +64,6 @@ const showLoadingSpinner = (
     containerSelector = spinnerContainerSelector;
   }
 
-  themeInfo?.[page]?.onSpinnerStart?.();
-
   const productsContainer = document.querySelector(
     containerSelector,
   ) as HTMLElement;
@@ -138,8 +136,6 @@ const hideLoadingSpinner = (
   for (const productElement of productElements) {
     productElement.style.visibility = 'visible';
   }
-
-  themeInfo?.[page]?.onSpinnerHide?.();
 };
 
 export { showLoadingSpinner, hideLoadingSpinner };

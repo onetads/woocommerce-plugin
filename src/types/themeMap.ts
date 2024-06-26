@@ -12,8 +12,6 @@ type TOptions = {
   ) => void;
   onProductsInjected?: () => void;
   onExistingProductRemove?: (element: HTMLElement | null) => void;
-  onSpinnerStart?: () => void;
-  onSpinnerHide?: () => void;
 };
 
 type TTheme = {
