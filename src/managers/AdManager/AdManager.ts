@@ -7,6 +7,7 @@ import {
 import {
   DSA_ICON_CLASS,
   SPONSORED_PRODUCT_TAG,
+  TAG_LABEL_HOOK_CLASS,
   TAG_REPLACEMENT_KEY,
 } from 'consts/products';
 import { DSA_ICON } from 'consts/tags';
@@ -197,7 +198,7 @@ class AdManager {
     let tagContent = window.sponsoredProductConfig.tagLabel;
 
     if (dsaUrl) {
-      tagContent = `${tagContent} <span class="${DSA_ICON_CLASS}" style="line-height: 1em; color: inherit;">${DSA_ICON}</span>`;
+      tagContent = `${tagContent} <p class="${TAG_LABEL_HOOK_CLASS}"></p> <span class="${DSA_ICON_CLASS}" style="display: grid; place-items: center; color: inherit;">${DSA_ICON}</span>`;
     }
 
     const newTagLabel = this.tagReplacement.replace(
