@@ -1,4 +1,5 @@
 const BASIC_TAG = 'div';
 const DLAPI_CHECK_DELAY = 20;
+const THEME_KEY = 'THEME_DATA';
 
-export { BASIC_TAG, DLAPI_CHECK_DELAY };
+export { BASIC_TAG, DLAPI_CHECK_DELAY, THEME_KEY };

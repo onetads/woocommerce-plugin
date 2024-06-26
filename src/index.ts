@@ -13,6 +13,7 @@ import getMessage from 'utils/getMessage';
 import getPageConfig from 'utils/getPageConfig';
 import getThemeInfo from 'utils/getThemeInfo';
 import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
+import themeListener from 'utils/themeListener';
 import waitForDlApi from 'utils/waitForDlApi';
 
 const isTestingEnvironment = process.env.IS_TEST_ENV === 'true';
@@ -35,6 +36,7 @@ if (isBlockTheme) {
       if (!page) return;
       if (getPageConfig(page)?.isEnabled === false) return;
 
+      themeListener();
       themeInfo = getThemeInfo();
       HTMLData = await getHTMLData(page, themeInfo);
 
