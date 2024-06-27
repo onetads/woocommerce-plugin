@@ -1,0 +1,33 @@
+{
+    "name": "ras-woocommerce-front",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "scripts": {
+      "eslint": "eslint --ext .js,.ts ./src",
+      "build": "webpack --config webpack.config.js --mode=production",
+      "prepare": "rimraf .husky/ && husky && echo \"yarn eslint\" > .husky/pre-push",
+      "test": "webpack --config webpack.config.js --mode=production --env IS_TEST_ENV=true"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.24.0",
+      "@babel/preset-env": "^7.24.0",
+      "@babel/preset-typescript": "^7.23.3",
+      "@types/node": "^20.11.22",
+      "@typescript-eslint/eslint-plugin": "^7.1.0",
+      "@typescript-eslint/parser": "^7.1.0",
+      "babel-loader": "^9.1.3",
+      "eslint": "^8.57.0",
+      "eslint-config-prettier": "^9.1.0",
+      "eslint-plugin-import": "^2.29.1",
+      "eslint-plugin-prettier": "^5.1.3",
+      "husky": "^9.0.11",
+      "prettier": "^3.2.5",
+      "rimraf": "^5.0.5",
+      "ts-loader": "^9.5.1",
+      "typescript": "^5.3.3",
+      "webpack": "^5.90.3",
+      "webpack-cli": "^5.1.4"
+    },
+    "dependencies": {}
+  }
+  
